@@ -1,3 +1,5 @@
 *.zip
 __*__
 .venv
+/sv_utils/
+/logs/

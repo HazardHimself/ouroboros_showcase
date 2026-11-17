@@ -9,7 +9,9 @@
     <!-- Importing AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Importing HTMX -->
-    <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.0"
+        integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+        crossorigin="anonymous"></script>
     <!-- Importing Simple CSS (until we need to make custom CSS) -->
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <!-- Importing Custom CSS using JINJA2 to navigate -->
@@ -17,83 +19,93 @@
 </head>
 
 <style>
-/* Putting this here so it's always loaded */
+    /* Putting this here so it's always loaded */
+    :root {
+        --color_accent: #007a1f;
+        --color_background: #212121;
+        --color_text: #dcdcdc;
+        --color_accent_hover: oklab(from var(--color_accent) calc(l + .15) calc(a + 0) calc(b + 0));
 
-:root {
-    --color_accent: #007a1f;
-    --color_background: #212121;
-    --color_text: #dcdcdc;
-    --color_accent_hover: oklab(from var(--color_accent) calc(l + .15) calc(a + 0) calc(b + 0));
+        --accent: var(--color_accent);
+        --bg: var(--color_background);
+        --text: var(--color_text);
+        --accent-hover: var(--color_accent_hover);
+    }
 
-    --accent: var(--color_accent);
-    --bg: var(--color_background);
-    --text: var(--color_text);
-    --accent-hover: var(--color_accent_hover);
-}
+    #form_select {
+        display: flex;
+        flex-wrap: wrap;
+        height: 25vh;
+        overflow: scroll;
+        border: .125rem solid var(--color_accent);
+        align-content: flex-start;
+    }
 
-#form_select {
-    display: flex;
-    flex-wrap: wrap;
-    height: 25vh;
-    overflow: scroll;
-    border: .125rem solid var(--color_accent);
-    align-content: flex-start;
-}
+    #form_select label {
+        flex-grow: 1;
+        text-align: center;
+        margin: .5rem;
+    }
 
-#form_select label {
-    flex-grow: 1;
-    text-align: center;
-    margin: .5rem;
-}
+    #form_select div {
+        padding: 1rem;
+        margin: auto;
+    }
 
-#form_select div {
-    padding: 1rem;
-    margin: auto;
-}
+    #form_select input[type=radio] {
+        display: none;
+    }
 
-#form_select input[type=radio] {
-    display: none;
-}
+    #form_select label:nth-child(odd)>div {
+        background-color: oklab(from var(--color_background) calc(l - 0.025) a b);
+        ;
+    }
 
-#form_select label:nth-child(odd)>div {
-    background-color: oklab(from var(--color_background) calc(l - 0.025) a b);;
-}
+    #form_select label:nth-child(even)>div {
+        background-color: oklab(from var(--color_background) calc(l + 0.025) a b);
+        ;
+    }
 
-#form_select label:nth-child(even)>div {
-    background-color: oklab(from var(--color_background) calc(l + 0.025) a b);;
-}
+    #form_select label:hover>div {
+        background-color: VAR(--color_accent);
+        color: var(--color_text);
+    }
 
-#form_select label:hover>div {
-    background-color: VAR(--color_accent);
-    color: var(--color_text);
-}
-
-#form_select label:has(input:checked)>div {
-    color: var(--color_text);
-    background-color: oklab(from var(--color_accent) calc(l + 0.075) a b);
-}
-
+    #form_select label:has(input:checked)>div {
+        color: var(--color_text);
+        background-color: oklab(from var(--color_accent) calc(l + 0.075) a b);
+    }
 </style>
 
+<script src="{{ url_for('static', filename='js/shared_functions.js') }}"></script>
 <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ouroboros_functions.js') }}"></script>
 
 <body>
     <main>
-        <div id="main_container" hx-trigger="load" hx-get="pane_default">
+        <div id="main_container">
         </div>
 
         <div id="pane_select">
-    <form id="form_select">
-        {% for option in available_panes %}
-        <label for="{{option}}">
-            <div>
-                {{option}}
-                <input value="{{option}}" id="{{option}}" name="pane_choice" type="radio" onChange="double_duty_pane_load('{{option}}', 'main_container')">
-            </div>
-        </label>
-        {% endfor %}
-    </form>
-</div>
+            <form id="form_select">
+                {% for option in available_panes %}
+                <label for="option_{{option}}">
+                    <div>
+                        {{option}}
+                        <input value="{{option}}" id="option_{{option}}" name="pane_choice" type="radio"
+                            onChange="double_duty_pane_load('ouroboros_{{option}}', 'main_container', this)">
+                    </div>
+                </label>
+                {% endfor %}
+            </form>
+        </div>
     </main>
 </body>
+
+<script id="self_destruct">
+    double_duty_pane_load('ouroboros_pane_default', 'main_container')
+    document.getElementById('pane_default').checked = true
+    document.getElementById('self_destruct').remove()
+</script>
+
 </html>
