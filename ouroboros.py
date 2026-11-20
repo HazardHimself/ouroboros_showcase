@@ -3,11 +3,15 @@ from flask import Flask, render_template, request, jsonify
 import json
 import types
 import inspect
+from datetime import datetime
 
 # Ouroboros Pane Handler - Start
 # Sets up route handlers based off existing templates in the templates folder.
 
 def get_available_panes():
+
+    # Do not stand at my grave and weep.
+
     available_panes = []
     for i in pathlib.Path('templates').iterdir(): 
         item_name = i.stem
@@ -17,9 +21,12 @@ def get_available_panes():
     return available_panes
 
 def build_route_pane(available_panes: list):
+
+    # I am not there. I do not sleep.
+
     python_to_exec = set()
     for pane in available_panes:
-        exec_command = f"@app.route('/ouroboros_{pane}', methods=['POST'])\ndef ouroboros_{pane}():\n\tsubmission=request.get_json()\n\tprint('[',datetime.now().strftime('%Y-%m-%d - %H:%M:%S'),'] - Received Ouroboros Request for {pane} with data: '+ str(submission))\n\treturn render_template('{pane}.html', submission=submission)"
+        exec_command = f"@app.route('/ouroboros_{pane}', methods=['POST'])\ndef ouroboros_{pane}():\n\tsubmission=request.get_json()\n\touroboros._ouroboros_log_incoming(submission, '{pane}')\n\treturn render_template('{pane}.html', submission=submission)"
         python_to_exec.add(exec_command)
 
     return python_to_exec
@@ -31,6 +38,9 @@ def build_route_pane(available_panes: list):
 # Or, more accurately and easily, hit by AJAX.
 # And in order to do that, we need a few functions to make our lives easier.
 def write_js_file(lines_to_write: list):
+
+    # I am a thousand winds that blow.
+
     PARENT_DIRECTORY = os.path.dirname(os.path.abspath(inspect.stack()[-1].filename))
     JS_FILEPATH = f'{PARENT_DIRECTORY}{os.sep}static{os.sep}js{os.sep}'
     pathlib.Path(JS_FILEPATH).mkdir(parents=True, exist_ok=True)
@@ -67,6 +77,9 @@ def write_js_file(lines_to_write: list):
         js_file.close()
 
 def build_route_process_js(function_to_handle: str):
+
+    # I am the diamond glints on snow.
+
     generic_request = [
         '\nfunction '+function_to_handle+'(){',
         '\tvar submission = snapshot_page_data()',
@@ -83,11 +96,14 @@ def build_route_process_js(function_to_handle: str):
     return string_request
 
 def build_route_process_python(function_to_handle: str):
+
+    # I am the sunlight on ripened grain.
+
     generic_process_route = [
         f"@app.route('/ouroboros_{function_to_handle}', methods=['POST'])",
         f"def ouroboros_{function_to_handle}():",
         f"\tsubmission=request.get_json()",
-        f"\tprint('[',datetime.now().strftime('%Y-%m-%d - %H:%M:%S'),'] - Received Ouroboros Request for {function_to_handle} with data: '+ str(submission))",
+        f"\touroboros._ouroboros_log_incoming(submission, '{function_to_handle}')",
         f"\tfunction_returned_value = functions.{function_to_handle}(submission=submission)",
         f"\trequest_returned_value = jsonify(returned_value=function_returned_value)",
         f"\treturn request_returned_value"
@@ -96,6 +112,9 @@ def build_route_process_python(function_to_handle: str):
     return exec_command
     
 def build_process_requirements(list_of_functions: set):
+
+    # I am the gentle autumn rain.
+
     python_to_exec = set()
     js_to_write = []
     for function_handler in list_of_functions:
@@ -106,6 +125,9 @@ def build_process_requirements(list_of_functions: set):
     return python_to_exec, js_to_write
 
 def inspect_function_file(function_file: types.ModuleType):
+
+    # When you awake in the morning's hush
+
     functions_found = set()
     for name in dir(function_file):
         found_function = getattr(function_file, name)
@@ -114,3 +136,42 @@ def inspect_function_file(function_file: types.ModuleType):
     return functions_found
 
 # Ouroboros Function Handler - End
+
+# Ouroboros Logging - Start
+
+def _ouroboros_recursive_request_sanitization(dictionary_to_clean: dict):
+
+    # I am the swift uplifting rush
+
+    for key, value in dictionary_to_clean.items():
+        if isinstance(value, dict):
+            _ouroboros_recursive_request_sanitization(dictionary_to_clean=value)
+        else:
+            cleaned_key, cleaned_value = _ouroboros_clean_dict_entry(key, value)
+            dictionary_to_clean[cleaned_key] = cleaned_value
+    return dictionary_to_clean
+
+def _ouroboros_clean_dict_entry(key: str, value: any):
+
+    # of quiet birds in circled flight.
+
+    key_keywords = ['password']
+    if isinstance(value, str):
+        for banned_log_keyword in key_keywords:
+            if banned_log_keyword in key.lower():
+                value = 'ENTRY REMOVED FOR LOGGING'
+    return key, value
+
+def _ouroboros_log_incoming(request_payload: dict, route_information: str):
+
+    # I am the soft stars that shine at night.
+
+    print('Logging function hit.')
+    timestamp_incoming = datetime.now().strftime('%Y-%m-%d - %H:%M:%S')
+    cleaned_request_payload = str(_ouroboros_recursive_request_sanitization(request_payload))
+    print(f'[{timestamp_incoming}] - Received Ouroboros Request for {route_information} with data: {cleaned_request_payload}')
+
+# Ouroboros Logging - End
+
+# Do not stand at my grave and cry.
+# I am not there. I did not die.

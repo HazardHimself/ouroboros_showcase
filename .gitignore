@@ -3,3 +3,5 @@ __*__
 .venv
 /sv_utils/
 /logs/
+shared_functions.js
+ouroboros_functions.js

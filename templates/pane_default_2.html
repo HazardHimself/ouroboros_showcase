@@ -1,4 +1,19 @@
 <div id="pane_default_2">
     Hello world 2
     {{submission['page_snapshot']['form_select']['pane_choice']}}
+    <h1>Simple Text Form</h1>
+    <form id="form_login">
+        <div class="db_login_box">
+            <h2>Login Form</h2>
+            <div>
+                <label id="username_label" for="username">Database Username</label>
+                <input type="text" name="username">
+            </div>
+            <div>
+                <label id="password_label" for="password">Database Password</label>
+                <input type="password" name="password">
+            </div>
+        </div>
+        <button type="button" onclick="process_login()">Login</button>
+    </form>
 </div>

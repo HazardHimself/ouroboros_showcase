@@ -6,3 +6,7 @@ def process_easy_return(submission: dict):
     value = "Hello there!"
 
     return value
+
+def process_login(submission: dict):
+
+    return submission
